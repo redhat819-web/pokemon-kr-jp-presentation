@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pokémon으로 만나는 한국어와 일본어</title>
+  <style>
+    :root { --ink:#f8fbff; --muted:#b9c9df; --navy:#071b36; --blue:#1677d2; --yellow:#ffd83d; --red:#ef4b54; --panel:rgba(12,39,73,.78); }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; overflow:hidden; color:var(--ink); font-family:"Pretendard","Noto Sans KR","Yu Gothic",sans-serif; background:#041226; }
+    .deck { width:100vw; height:100vh; position:relative; background:radial-gradient(circle at 85% 12%,#1d73bd 0%,transparent 28%),radial-gradient(circle at 8% 90%,#8e2254 0%,transparent 30%),linear-gradient(135deg,#041328,#0a2850); }
+    .deck::before { content:""; position:absolute; inset:-25%; opacity:.12; background-image:radial-gradient(#fff 1px,transparent 1px); background-size:25px 25px; transform:rotate(12deg); }
+    .slide { display:none; position:absolute; inset:0; padding:6.3vh 8vw 10vh; align-items:center; justify-content:center; animation:enter .45s ease both; }
+    .slide.active { display:flex; }
+    .content { width:min(1160px,100%); position:relative; z-index:1; }
+    .eyebrow { margin:0 0 1.8vh; font-weight:800; letter-spacing:.12em; color:var(--yellow); font-size:clamp(.8rem,1.2vw,1.15rem); }
+    h1 { font-size:clamp(2.6rem,6vw,6.8rem); line-height:1.05; margin:0; letter-spacing:-.055em; }
+    h2 { font-size:clamp(2rem,4.3vw,4.6rem); line-height:1.1; margin:0 0 3.2vh; letter-spacing:-.045em; }
+    h3 { font-size:clamp(1.2rem,2vw,2rem); margin:0 0 1.5vh; }
+    p, li { font-size:clamp(1rem,1.7vw,1.55rem); line-height:1.7; }
+    .lead { max-width:730px; color:var(--muted); margin:2.8vh 0 0; font-size:clamp(1.1rem,2vw,1.8rem); }
+    .ball { width:clamp(170px,24vw,330px); aspect-ratio:1; border-radius:50%; background:linear-gradient(var(--red) 0 46%,#101723 46% 54%,#f7fbff 54%); border:clamp(6px,.7vw,10px) solid #111827; position:absolute; right:8vw; top:50%; transform:translateY(-50%); box-shadow:0 24px 55px #0007; }
+    .ball::after { content:""; position:absolute; width:24%; aspect-ratio:1; left:38%; top:38%; border-radius:50%; background:#fff; border:clamp(6px,.7vw,10px) solid #111827; }
+    .flags { display:flex; gap:1rem; margin-top:3vh; }
+    .flag { padding:.5em .8em; border:1px solid #ffffff33; border-radius:999px; background:#ffffff12; font-size:clamp(1rem,1.7vw,1.5rem); }
+    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.6vw; }
+    .card { padding:2.2vh 2vw; background:var(--panel); border:1px solid #ffffff24; border-radius:24px; box-shadow:0 18px 35px #0003; backdrop-filter:blur(8px); }
+    .card p { margin:.2em 0; }
+    .jp { color:#8dd1ff; }
+    .ko { color:#ffe67a; }
+    .timeline { display:flex; gap:1.4vw; align-items:stretch; }
+    .timeline .card { flex:1; }
+    .year { color:var(--yellow); font-size:clamp(1.7rem,3vw,3.1rem); font-weight:900; }
+    table { width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:22px; border:1px solid #ffffff28; background:#061b35c9; font-size:clamp(1rem,1.7vw,1.55rem); }
+    th,td { padding:1.55vh 2vw; text-align:left; border-bottom:1px solid #ffffff1f; }
+    th { background:#1677d244; color:#fff; } tr:last-child td { border-bottom:0; }
+    .name { color:var(--yellow); font-weight:800; }
+    .quote { border-left:6px solid var(--yellow); padding:1.4vh 2vw; background:#ffffff0f; border-radius:0 18px 18px 0; margin:2.5vh 0; }
+    .quote p { margin:.2em 0; }
+    .questions { display:grid; grid-template-columns:repeat(3,1fr); gap:1.4vw; }
+    .q { padding:2.5vh 1.5vw; text-align:center; background:linear-gradient(145deg,#185794,#0d2d58); border-radius:24px; border:1px solid #ffffff33; font-size:clamp(1.1rem,1.8vw,1.65rem); font-weight:700; }
+    .capture-layout { display:grid; grid-template-columns:minmax(260px,.72fr) minmax(0,1.28fr); gap:2vw; align-items:center; }
+    .capture-image { display:block; max-height:60vh; max-width:100%; margin:auto; border-radius:22px; border:3px solid #ffffffb3; box-shadow:0 22px 45px #0008; object-fit:contain; background:#fff; }
+    .capture-wide { max-height:56vh; }
+    .badge { display:inline-block; margin-top:2vh; padding:.55em .85em; background:var(--yellow); color:#172133; border-radius:999px; font-weight:900; }
+    .controls { position:fixed; z-index:10; bottom:2.3vh; right:4vw; display:flex; align-items:center; gap:.8rem; }
+    button { border:1px solid #ffffff44; color:#fff; background:#0f396bcc; cursor:pointer; border-radius:999px; width:48px; height:48px; font-size:1.4rem; } button:hover { background:var(--blue); }
+    #counter { color:#d2e4ff; min-width:52px; text-align:center; }
+    .hint { position:fixed; z-index:10; bottom:3.5vh; left:4vw; color:#d2e4ff99; font-size:.9rem; }
+    @keyframes enter { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+    @media (max-width:700px) { .slide { padding:8vh 7vw 14vh; } .ball { opacity:.2; right:-9vw; } .grid,.questions,.capture-layout { grid-template-columns:1fr; gap:1vh; } .timeline { display:grid; grid-template-columns:1fr 1fr; gap:1vh; } .capture-image { max-height:38vh; } .hint { display:none; } }
+  </style>
+</head>
+<body>
+  <main class="deck" aria-live="polite">
+    <section class="slide active">
+      <div class="content"><p class="eyebrow">KOREAN × JAPANESE POKÉMON SMALL TALK</p><h1>포켓몬 친구가<br>되어요!</h1><p class="lead">ポケモンが好きな方、ぜひ友だちになりましょう。<br>한국어와 일본어로 즐겁게 이야기해요!</p><div class="flags"><span class="flag">🇰🇷 한국어</span><span class="flag">🇯🇵 日本語</span><span class="flag">⚡ ピカチュウ</span></div></div><div class="ball" aria-hidden="true"></div>
+    </section>
+    <section class="slide"><div class="content"><p class="eyebrow">01 · PIKACHU SEASON IN KOREA</p><h2>지금 한국은 피카츄 시즌!<br><span class="jp">今、韓国はピカチュウシーズン！</span></h2><div class="grid"><article class="card"><h3>⚡ 피카츄를 많이 만나요</h3><p>요즘 한국에서는 피카츄가 정말 많이 등장하고 있어요.</p><p class="jp">今、韓国ではピカチュウにたくさん出会えます。</p><p><span class="badge">⚡ ⚡ ⚡ ⚡ ⚡</span></p></article><article class="card"><h3>🤝 포켓몬 친구를 찾고 있어요</h3><p>같이 잡고, 레이드하고, 포켓몬 이야기를 나눌 친구를 찾고 있습니다.</p><p class="jp">一緒に捕まえたり、レイドをしたり、ポケモンの話ができる友達を探しています。</p></article></div><div class="quote"><p>피카츄를 좋아하시나요? · ピカチュウは好きですか？</p></div></div></section>
+    <section class="slide"><div class="content"><p class="eyebrow">02 · ABOUT POKÉMON</p><h2>포켓몬, 그리고 Pokémon GO</h2><div class="timeline"><article class="card"><div class="year">1996</div><p>일본에서 시작한<br><b>ポケットモンスター</b></p></article><article class="card"><div class="year">🌏</div><p>게임·애니메이션·카드로 전 세계에서 사랑받는 콘텐츠</p></article><article class="card"><div class="year">📱</div><p>Pokémon GO에서는 걷고, 잡고, 레이드하고, 친구와 교환합니다.</p></article></div><div class="quote"><p><b>한국어 / 日本語:</b> 피카츄 / ピカチュウ · 꼬부기 / ゼニガメ · 이상해씨 / フシギダネ · 파이리 / ヒトカゲ</p><p class="jp">言葉が違っても、ポケモンが好きという気持ちは同じです！</p></div></div></section>
+    <section class="slide"><div class="content"><p class="eyebrow">03 · MY TRAINER ACCOUNT</p><h2>나의 Pokémon GO 계정<br><span class="jp">私の Pokémon GO アカウント</span></h2><div class="capture-layout"><img class="capture-image" src="pokemon_meet_private_assets/trainer_profile.jpg" alt="lilyhyunjin81 Pokémon GO profile screenshot"><article class="card"><h3>🙋 Trainer</h3><p class="name">lilyhyunjin81</p><p><span class="badge">LEVEL 40</span></p><p>빠르게 레벨이 올라가서 더 재미있게 하고 있습니다.</p><p class="jp">レベルがどんどん上がって、ますます楽しいです。</p><hr><h3>가족 친구 · 家族のフレンド</h3><p><b>lilypoby</b> (남편 / 夫)<br><b>lilyjeahee</b> (딸 / 娘)</p><p class="jp">フレンド追加・ギフト・レイド・交換、全部歓迎です！</p></article></div></div></section>
+    <section class="slide"><div class="content"><p class="eyebrow">04 · FAMILY & FRIENDS</p><h2>가족과 함께 즐기는 Pokémon GO<br><span class="jp">家族と楽しむ Pokémon GO</span></h2><div class="capture-layout"><img class="capture-image capture-wide" src="pokemon_meet_private_assets/family_friends.jpg" alt="Pokémon GO family friends screenshot"><article class="card"><h3>우리 가족 계정 · 家族のアカウント</h3><p><b>lilyhyunjin81</b> · 나 / 私</p><p><b>lilypoby</b> · 남편 / 夫</p><p><b>lilyjeahee</b> · 딸 / 娘</p><div class="quote"><p>함께 포켓몬을 잡고, 선물을 주고받고, 레이드와 교환도 해요.</p><p class="jp">一緒にポケモンを捕まえて、ギフトやレイド、交換も楽しみます。</p></div></article></div></div></section>
+    <section class="slide"><div class="content"><p class="eyebrow">05 · HAPPINY TRADE REQUEST</p><h2>해피너스 교환 부탁드려요<br><span class="jp">ハピナスの交換をお願いします</span></h2><div class="capture-layout"><img class="capture-image" src="pokemon_meet_private_assets/blissey.jpg" alt="Blissey CP 2117 Pokémon GO screenshot"><article class="card"><h3>💗 제가 보내고 싶은 해피너스</h3><p><b>해피너스 · ハピナス</b></p><p><span class="badge">CP 2,117</span></p><p class="jp">私のハピナスをお送りします。</p><hr><h3>🤝 교환 희망 · 交換希望</h3><p>비슷한 CP/레벨의 해피너스와 교환하고 싶습니다.</p><p class="jp">同じくらいのCP・レベルのハピナスと交換したいです。</p><p>딸에게 부탁했지만 귀찮다고 해서, 마음 맞는 친구를 찾고 있어요. 😊</p><p class="jp">娘には面倒だと言われてしまったので、一緒に交換できる友達を探しています。😊</p></article></div></div></section>
+  </main>
+  <div class="hint">← → 키 또는 버튼으로 이동 · F11 전체화면</div><div class="controls"><button id="prev" aria-label="이전 슬라이드">←</button><span id="counter">1 / 6</span><button id="next" aria-label="다음 슬라이드">→</button></div>
+  <script>
+    const slides = [...document.querySelectorAll('.slide')]; let current = 0;
+    function show(index) { current = (index + slides.length) % slides.length; slides.forEach((s,i) => s.classList.toggle('active', i === current)); document.getElementById('counter').textContent = `${current + 1} / ${slides.length}`; }
+    document.getElementById('prev').onclick = () => show(current - 1); document.getElementById('next').onclick = () => show(current + 1);
+    addEventListener('keydown', e => { if (['ArrowRight','PageDown',' '].includes(e.key)) { e.preventDefault(); show(current + 1); } if (['ArrowLeft','PageUp'].includes(e.key)) { e.preventDefault(); show(current - 1); } });
+  </script>
+</body>
+</html>
